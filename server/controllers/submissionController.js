@@ -1,4 +1,4 @@
-﻿const Submission = require('../models/Submission');
+const Submission = require('../models/Submission');
 const Task = require('../models/Task');
 
 // @desc  Submit a task with a file upload
@@ -21,18 +21,15 @@ const submitTask = async (req, res) => {
     let submission = await Submission.findOne({ taskId, talentId: req.user._id });
 
     if (submission) {
-      // Overwrite: update in place
-      submission.fileUrl = fileUrl;
-      submission.notes = notes;
-      await submission.save();
-    } else {
-      submission = await Submission.create({
-        taskId,
-        talentId: req.user._id,
-        fileUrl,
-        notes,
-      });
+      return res.status(400).json({ message: 'Task already submitted.' });
     }
+
+    submission = await Submission.create({
+      taskId,
+      talentId: req.user._id,
+      fileUrl,
+      notes,
+    });
 
     // Update task status to Submitted
     await Task.findByIdAndUpdate(taskId, { status: 'Submitted' });
