@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -69,7 +70,7 @@ const TalentSidebar = () => {
       {/* Footer */}
       <div className="px-3 pb-5">
         <div className="sidebar-divider mb-4" />
-        <div className="flex items-center justify-between gap-2 px-1">
+        <div className="flex flex-col gap-3 px-1">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full avatar-talent flex items-center justify-center text-[12px] font-bold text-white shrink-0">
               {user?.name?.[0]?.toUpperCase() ?? 'T'}
@@ -85,9 +86,10 @@ const TalentSidebar = () => {
 
           <button
             onClick={() => { logout(); navigate('/login'); }}
-            title="Sign out"
-            className="logout-btn">
+            className="logout-btn w-full gap-2"
+            style={{ padding: '8px', background: 'rgba(239,68,68,0.05)' }}>
             <IconLogout />
+            <span className="text-[13px] font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>Logout</span>
           </button>
         </div>
       </div>
