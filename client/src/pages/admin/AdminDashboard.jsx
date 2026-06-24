@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import Sidebar from '../../components/admin/Sidebar';
 import TasksTable from '../../components/admin/TasksTable';
 import CreateTaskModal from '../../components/admin/CreateTaskModal';
 import EditTaskModal from '../../components/admin/EditTaskModal';
-import { fetchAllTasks } from '../../api/tasks';
+import { fetchAllTasks, fetchTalents } from '../../api/tasks';
 
 /* ── Search icon ── */
 const IconSearch = () => (
@@ -22,6 +23,7 @@ const IconPlus = () => (
 
 const AdminDashboard = () => {
   const [tasks, setTasks]           = useState([]);
+  const [talents, setTalents]       = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [editTask, setEditTask]     = useState(null);
   const [search, setSearch]         = useState('');
@@ -36,8 +38,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const loadTalents = async () => {
+    try {
+      const { data } = await fetchTalents();
+      setTalents(data);
+    } catch {
+      alert('Failed to load talents');
+    }
+  };
+
   // eslint-disable-next-line
-  useEffect(() => { loadTasks(); }, []);
+  useEffect(() => { loadTasks(); loadTalents(); }, []);
 
   const stats = {
     total:     tasks.length,
@@ -51,6 +62,7 @@ const AdminDashboard = () => {
     { label: 'Open',        value: stats.open,      colorClass: 'stat-card-blue',    valueColor: '#60A5FA' },
     { label: 'Submitted',   value: stats.submitted, colorClass: 'stat-card-info',    valueColor: '#60A5FA' },
     { label: 'Approved',    value: stats.approved,  colorClass: 'stat-card-green',   valueColor: '#34D399' },
+    { label: 'Active Talents', value: talents.length,  colorClass: 'stat-card-purple',   valueColor: '#A78BFA' },
   ];
 
   /* Filter tasks */
@@ -63,10 +75,10 @@ const AdminDashboard = () => {
   });
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#050505' }}>
+    <div className="flex flex-col md:flex-row min-h-screen" style={{ background: '#050505' }}>
       <Sidebar />
 
-      <main className="ml-[240px] flex-1 px-8 py-8" style={{ maxWidth: 'calc(100vw - 240px)' }}>
+      <main className="md:ml-[240px] flex-1 px-4 md:px-8 py-8 min-w-0">
 
         {/* Page header */}
         <div className="flex items-center justify-between mb-7 page-section">
@@ -89,7 +101,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-4 gap-4 mb-6 page-section">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 page-section">
           {statCards.map(({ label, value, colorClass, valueColor }) => (
             <div key={label} className={`stat-card ${colorClass}`}>
               <span className="block text-[10.5px] font-semibold uppercase tracking-[0.08em] mb-3"
